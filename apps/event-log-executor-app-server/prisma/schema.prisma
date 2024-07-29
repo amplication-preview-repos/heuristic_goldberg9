@@ -1,0 +1,83 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ToolUse {
+  createdAt  DateTime @default(now())
+  createdBy  String?
+  id         String   @id @default(cuid())
+  parameters Json?
+  tool       Tool?    @relation(fields: [toolId], references: [id])
+  toolId     String?
+  updatedAt  DateTime @updatedAt
+}
+
+model Llm {
+  configField   String?
+  configuration String?
+  createdAt     DateTime @default(now())
+  createdBy     String?
+  id            String   @id @default(cuid())
+  name          String?
+  tools         Tool?    @relation(fields: [toolsId], references: [id])
+  toolsId       String?  @unique
+  updatedAt     DateTime @updatedAt
+  version       String?
+}
+
+model Tool {
+  createdAt   DateTime  @default(now())
+  createdBy   String?
+  creator     Llm?
+  description String?
+  id          String    @id @default(cuid())
+  name        String?
+  toolUses    ToolUse[]
+  typeField   String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Event {
+  createdAt   DateTime  @default(now())
+  createdBy   String?
+  description String?
+  id          String    @id @default(cuid())
+  name        String?
+  timestamp   DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Workspace {
+  createdAt DateTime @default(now())
+  createdBy String?
+  id        String   @id @default(cuid())
+  name      String?
+  path      String?
+  updatedAt DateTime @updatedAt
+}
+
+model LlmConfiguration {
+  createdAt DateTime @default(now())
+  createdBy String?
+  id        String   @id @default(cuid())
+  name      String?
+  settings  Json?
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String   @unique
+  firstName String
+  id        String   @id @default(cuid())
+  lastName  String
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
